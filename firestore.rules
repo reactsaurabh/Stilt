@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userID} {
+      // function isUser(){
+      // 	//For checking user is reading and updating its own info
+      //   return request.auth.uid == userID
+      // }
+      allow read, write : if request.auth.uid!=null
+    }
+    
+    match /notifications/{notificationID} {
+    	allow update : if false;
+      allow read: if request.auth.uid!=null;
+    }
+    
+    match /property/{propertyID} {
+    	allow read, write : if request.auth.uid!=null;
+    }
+    
+    match /transactions/{transactionID} {
+    	allow read, write : if request.auth.uid!=null;
+    }
+    
+    match /events/{eventID} {
+    	allow read, write : if request.auth.uid!=null;
+    }
+    
+     match /vendors/{vendorID} {
+    	allow read, write : if request.auth.uid!=null;
+    }
+    match /profile/{profileID} {
+    	allow read, write : if request.auth.uid!=null;
+    }
+	}
+}

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Stilt</string>
+    <string name="default_notification_channel_id">StiltChannel</string>
+</resources>

@@ -1,0 +1,504 @@
+const helper = require('./helper');
+const {dateFormatter, NumInWords, address, formattedNoticePeriod} = helper;
+module.exports = propertyDetails => {
+  const currentAgreement = propertyDetails.agreement.filter(
+    p => p.currentAgreement,
+  )[0];
+  const owner = propertyDetails.party.filter(p => p.role === 'Owner')[0];
+  const tenant = propertyDetails.party.filter(p => p.role === 'Tenant')[0];
+  const rentMonthDuration = `${NumInWords(
+    currentAgreement.rentPayment.length,
+  )}(${currentAgreement.rentPayment.length})`;
+  return `<!doctype html>
+    <html>
+       <head>
+          <meta charset="utf-8">
+          <title>Agreement Template</title>
+		  <style>
+      .container {
+        padding: 16px;
+        font-size: 12px;
+      }
+      .break-page {
+        page-break-after: always;
+      }
+      .header-view {
+        margin-top:50%
+      }
+      .header {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .text-align-center {
+        text-align: center;
+      }
+      .font-bold {
+        font-weight: bold;
+      }
+      .mt-32 {
+        margin-top: 32px;
+      }
+      .mb-32 {
+        margin-bottom: 32px;
+      }
+      .my-32 {
+        margin: 32px 0;
+      }
+      .mt-16 {
+        margin-top: 16px;
+      }
+      .mb-16 {
+        margin-bottom: 16px;
+      }
+      .my-16 {
+        margin: 16px 0;
+      }
+
+      li {
+        margin: 16px 0;
+      }
+      ul ul {
+        list-style-type: disc;
+      }
+
+      table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+      }
+
+      td,
+      th {
+        word-break: break-word;
+        border: 1px solid #999;
+        padding: 0.5rem;
+        text-align: left;
+      }
+
+      .b-table-cell {
+        display: flex;
+        height: 175px;
+        flex-direction: column;
+      }
+      .justify-content-end {
+        justify-content: flex-end;
+      }
+      .flex-center {
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header-view text-align-center">
+        <div class="header">LEAVE AND LICENCE AGREEMENT</div>
+        <div>
+          <p>
+            THIS AGREEMENT OF LEAVE & LICENSE is made and entered into at
+            ${propertyDetails.property.city}, ${
+    propertyDetails.property.state
+  } on this ${
+    dateFormatter(currentAgreement.createdAt.seconds * 1000).fullDate_alpha
+  } ,
+          </p>
+          <p>
+            BETWEEN
+          </p>
+          <p>
+            <span>${owner.name} (Owner)</span>, residing at
+            ${address(
+              propertyDetails.property,
+            )}, hereinafter referred to as “The
+            Licensor” of the “One Part”
+          </p>
+          <p>
+            AND
+          </p>
+          <p>
+            <span>${tenant.name} (Tenant)</span>, hereinafter referred to as
+            “The Licensee” (which expression shall mean and include his family,
+            heirs, legal representatives, executors, administrators, successors
+            and assigns) of the “Other Part”.
+          </p>
+        </div>
+      </div>
+      <div class="break-page"></div>
+      <div class="section">
+        <div>
+          <p>WHEREAS</p>
+          <p>
+            The Licensor is the exclusive owner, and is seized and possessed of
+            Unit No. G2 (hereinafter referred to as the “SCHEDULED PREMISES”),
+            admeasuring about 900 square feet built-up area on the ground floor
+            of ${address(propertyDetails.property)}
+          </p>
+        </div>
+        <div>
+          <p>AND WHEREAS</p>
+          <p>
+            The Licensee has approached The Licensor seeking the said flat on
+            Leave and License basis for a period of {rentMonthDuration} months
+            on the terms and conditions mutually agreed to, appearing
+            hereinafter:
+          </p>
+        </div>
+        <div class="font-bold mt-32">
+          NOW THIS AGREEMENT WITNESSETH AS UNDER GRANT OF LICENSE
+        </div>
+        <ul>
+          <li>
+            The Licensor hereby states that he grants the Licensee the license
+            to use the premises for residential purpose only, and no other
+            purpose, with effect from
+            ${
+              dateFormatter(currentAgreement.startDate.seconds * 1000)
+                .fullDate_alpha_two
+            } for
+            a period of ${rentMonthDuration} months only, on Leave and License
+            basis.
+          </li>
+          <li>
+            The Licensee has agreed to occupy and use the premises, along with
+            the fixtures and fittings, for a period of ${rentMonthDuration}
+            months purely on Leave and License basis, commencing on ${
+              dateFormatter(currentAgreement.startDate.seconds * 1000)
+                .fullDate_alpha_two
+            } and
+            expiring on
+            ${
+              dateFormatter(currentAgreement.endDate.seconds * 1000)
+                .fullDate_alpha_two
+            }.
+          </li>
+          <li>The financial compensation terms shall be as follows:</li>
+          <ul>
+            <li>
+              The Licensee shall pay ₹ ${currentAgreement.rent} per month in
+              advance as compensation for the use of the said flat on or before
+              the 06th day of every month via Cash / Cheque No.(s) / Bank
+              Transfer (NEFT / RTGS / IMPS / UPI). If the Licensee fails to pay
+              such payment when due, the Licensor has the right to collect the
+              sums due or cancel the agreement without any notice or payment of
+              any compensation to the Licensee.
+            </li>
+            <li>
+              The Licensee shall pay The Licensor a sum of ₹
+              ${currentAgreement.deposit} as an interest-free security deposit
+              via Cash / Cheque No.(s) / Bank Transfer (NEFT / RTGS / IMPS /
+              UPI).
+            </li>
+            <li>
+              The said Security Deposit shall not carry any interest and shall
+              be refunded to the Licensee after complete and satisfactory
+              handover of the said premises to The Licensor. In case of any
+              loss, damage to the premises, fixtures, fittings and furniture,
+              appropriate replacement or refurbishment charges for the loss
+              and/or damage and all pending bills & fees which are due to be
+              paid by the Licensee as on date will be deducted out of the
+              Security Deposit held by the Licensor and only the balance amount
+              shall be refunded.
+            </li>
+            <li>
+              The Licensee, unless agreed otherwise, shall bear the charges for
+              utilities namely Electricity, Water, Cooking Gas, Telephone, and
+              Cable, and shall make payments of these bills on timely basis. The
+              Licensee shall pay Electricity, Gas and Water bill from the date
+              of possession till vacating the premises, payable in full as per
+              billing cycle. Any penalties, late payment fines, will be to the
+              account of the Licensee.
+            </li>
+            <li>
+              The Licensor shall bear the society charges including municipal
+              taxes. Any increase in municipal taxes or other statutory levies,
+              if any, will be borne by the Licensor.
+            </li>
+          </ul>
+          <li>
+            The Licensee shall automatically be terminated on completion of
+            ${rentMonthDuration} months from
+            ${
+              dateFormatter(currentAgreement.startDate.seconds * 1000)
+                .fullDate_alpha_two
+            }, or
+            on the expiry of the notice period in case of Early Termination, and
+            immediately after that day. The Licensee shall handover peaceful
+            vacant possession of the said premises to the Licensor.
+          </li>
+          <li>
+            The Licensor and The Licensee hereby covenant with each other that
+            if The Licensee decides to terminate The Agreement earlier (Early
+            Termination) than on completion of ${rentMonthDuration} months
+            starting
+            ${
+              dateFormatter(currentAgreement.startDate.seconds * 1000)
+                .fullDate_alpha_two
+            }, the
+            Licensee shall give
+            ${formattedNoticePeriod(currentAgreement.noticePeriod)} written
+            notice to The Licensor of such intention. The Licensor can give
+            ${formattedNoticePeriod(currentAgreement.noticePeriod)} days of
+            notice to The Licensee for termination of The Agreement.
+          </li>
+          <li>
+            The Licensee shall pay early termination fees if The Licensee
+            decides to terminate the Agreement earlier than on completion of
+            ${formattedNoticePeriod(currentAgreement.noticePeriod)}. The early
+            termination fees shall be equivalent of three months of rent. The
+            early termination fees can be waived at the sole discretion of the
+            Licensor for reasonable situations.
+          </li>
+          <li>
+            The Licensor shall have full rights to take immediate possession of
+            the flat on breach of any of the herein mentioned terms and
+            conditions on the part of the Licensee, at any time.
+          </li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="font-bold mt-32">TERMS & CONDITIONS OF USE</div>
+        <li>
+          The Licensee shall use the said flat himself for residential purpose
+          only.
+        </li>
+        <li>
+          The Licensee shall not keep, permit or allow anyone else to use the
+          said flat, or grant Licensee to use and occupy, or sublet, nor shall
+          transfer or assign the benefits of this agreement to any other person.
+        </li>
+        <li>
+          At all times, the ownership and legal possession and occupation of the
+          said flat shall remain with the Licensor only; the Licensee shall use
+          and occupy the said flat as Licensee only, and shall not claim any
+          title or interest of any nature whatsoever in the said flat, and that
+          nothing in this agreement shall be construed to be a demise at law in
+          respect of the said flat, or to confer upon the Licensee any right of
+          tenancy/sub-tenancy/lease/sub-lease etc., in respect of the said flat.
+        </li>
+        <li>
+          The Licensee shall keep the said flat in good condition and if any
+          damages, breakages or disrepairs are caused to the said flat, or the
+          society, due to any act or deed of the Licensee, the Licensee shall
+          fully make good the charges on account of such damages, breakages or
+          disrepairs.
+        </li>
+        <li>
+          The Licensee shall not cause any nuisance, and shall refrain from
+          doing any act which is objectionable to the Licensor, neighbors, or
+          the society, and the Licensor retains the right to enter and inspect
+          the said flat, with prior reasonable notification to the Licensee, at
+          any time convenient to him during the period of tenancy.
+        </li>
+        <li>
+          The Licensee shall not make any structural alterations whatsoever to
+          the licensed premises (internal / external) or additions, changes in
+          the fixtures and fittings as pertaining thereto without the prior
+          written consent of the Licensor.
+        </li>
+        <li>
+          The Licensee hereby confirms that the said flat shall be occupied by
+          him on “as-is-where-is” basis, and that, therefore, any relevant
+          laws/rules to the contrary notwithstanding, he shall not during the
+          period of this License, or thereafter, demand from the Licensor any
+          payment for any additions / alterations / repairs / renovations,
+          which, if required by the Licensee, shall be carried out by the
+          Licensee at his own cost, subject to obtaining prior written
+          permission from the Licensor, the said society and all other concerned
+          authorities.
+        </li>
+        <li>
+          The Licensee shall not carry on any illegal business or activities,
+          nor shall he store any prohibited articles or commodities, or items
+          which could cause damage to the said flat, and shall strictly observe
+          the rules and regulations of the said society and local Municipal
+          Corporation.
+        </li>
+        <li>
+          The Licensee shall, on expiry of the period of this agreement, or on
+          earlier termination as hereinabove provided, remove himself together
+          with all his articles/things and hand over peaceful and vacant
+          possession to the Licensor without any let or hindrance, in good order
+          and condition.
+        </li>
+        <li>
+          The Licensee shall permit the Licensor, his servants, agents,
+          surveyors, engineers, architects, workmen, intending purchasers, and
+          all other persons authorized by the Licensor to enter upon the said
+          premises at any reasonable time in the day, with prior reasonable
+          notification to the Licensee.
+        </li>
+        <li>
+          The Licensor shall not be responsible or liable for any damage caused
+          to the person or property of the Licensee or his family either by
+          fire, rain, flood, dampness, leakage, bursting of water or gas pipes
+          or tubes, electric wires or other installation in or about the said
+          flat, or by giving way of any portion of or portions of the flooring,
+          wall, roof, ceiling or any other part of the building or the said
+          society. Likewise, the Licensee shall not be responsible or liable for
+          any damage caused to the person or property of the Licensor or his
+          family either by natural causes.
+        </li>
+        <li>
+          The Licensee shall not do or cause to be done, any act or deed, in or
+          about the said flat or the said society that is illegal / improper /
+          indecent / immoral or which may expose the Licensor to any damage /
+          loss / harm, due to any Legal / Government / Society's action, or any
+          action by any person(s) so affected.
+        </li>
+        <li>
+          The Licensee hereby agrees to indemnify the Licensor from all claims /
+          demands / damages / actions / costs / charges, to which he may be held
+          liable, by reason of any activity / negligence / commission / omission
+          / non-observance of any terms and conditions of this License, or
+          otherwise by the Licensee or anyone acting for him.
+        </li>
+        <li>This agreement shall be governed by:</li>
+        <li>Indian Contract Act, 1882</li>
+        <li>Information Technology Act, 2000</li>
+        <li>
+          The Licensee shall pay The Licensor an enhanced charge of Rs. 500/-
+          (Rupees Five Hundred) per day if the Licensee fails to vacate the
+          premises and hand over peaceful vacant possession of the said Flat to
+          The Licensor on expiry of the period of this agreement, or on earlier
+          termination as hereinabove provided.
+        </li>
+        <li>
+          The Licensee shall bear and pay all cost and expenses by way of
+          notarization, stamp duty, registration charges, etc. in respect of
+          this Agreement, including the professional fees of the respective
+          agent’s advocates.
+        </li>
+        <div class="mt-32">
+          IN WITNESS WHEREOF the parties hereto have hereunto set and subscribed
+          their respective hands on the day and the year hereinabove stated.
+        </div>
+      </div>
+      <div class="break-page"></div>
+      <div class="section">
+        <div class="font-bold mb-16">SCHEDULE-A</div>
+        <table>
+          <thead>
+            <tr>
+              <td>Agreement Type</td>
+              <td>Agreement ID</td>
+              <td>Start Date</td>
+              <td>End Date</td>
+              <td>Amount</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Deposit</td>
+              <td>${currentAgreement.depositAgreementNo}</td>
+              <td>${
+                dateFormatter(currentAgreement.startDate.seconds * 1000)
+                  .fullDate
+              }</td>
+              <td>${
+                dateFormatter(currentAgreement.endDate.seconds * 1000).fullDate
+              }</td>
+              <td>${currentAgreement.deposit}</td>
+            </tr>
+            <tr>
+              <td>Rent</td>
+              <td>${currentAgreement.rentAgreementNo}</td>
+              <td>${
+                dateFormatter(currentAgreement.startDate.seconds * 1000)
+                  .fullDate
+              }</td>
+              <td>${
+                dateFormatter(currentAgreement.endDate.seconds * 1000).fullDate
+              }</td>
+              <td>${currentAgreement.rent}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="break-page"></div>
+      <div class="section">
+        <div class="font-bold mb-16">SCHEDULE-B</div>
+        <div class="mb-16">
+          IN WITNESS WHEREOF THE PARTIES HAVE SET AND SUBSCRIBED THEIR
+          RESPECTIVE HANDS ON THE DAY AND THE YEAR FIRST HEREIN ABOVE MENTIONED
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <td>Name & Signature</td>
+              <td>Thumb Impression</td>
+              <td>Photo</td>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>
+                <div class="b-table-cell justify-content-end">
+                  <div class="font-bold">${owner.name} (Owner)</div>
+                  <div>........................................</div>
+                  <div>LICENSOR</div>
+                </div>
+              </td>
+              <td>
+                <div class="b-table-cell flex-center">
+                  <div>e-signed via OTP confirmation</div>
+                  <div>
+                    ${
+                      dateFormatter(currentAgreement.createdAt.seconds * 1000)
+                        .fullDate
+                    }
+                  </div>
+                  <div>${owner.mobile}</div>
+                </div>
+              </td>
+              <td><div class="b-table-cell"></div></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="b-table-cell justify-content-end">
+                  <div class="font-bold">${tenant.name} (Owner)</div>
+                  <div>........................................</div>
+                  <div>LICENSEE</div>
+                </div>
+              </td>
+              <td>
+                <div class="b-table-cell flex-center">
+                  <div>e-signed via OTP confirmation</div>
+                  <div>
+                    ${
+                      dateFormatter(currentAgreement.createdAt.seconds * 1000)
+                        .fullDate
+                    }
+                  </div>
+                  <div>${tenant.mobile}</div>
+                </div>
+              </td>
+              <td><div class="b-table-cell"></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="my-16">
+          <div class="font-bold">WITNESS 1:</div>
+          <div>Name:.........................................</div>
+          <div>
+            ID Proof Document:..........................................
+          </div>
+          <div>
+            Address.........................................................
+          </div>
+        </div>
+        <div class="my-16">
+          <div class="font-bold">WITNESS 2:</div>
+          <div>Name:.........................................</div>
+          <div>
+            ID Proof Document:..........................................
+          </div>
+          <div>
+            Address.........................................................
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+		</html>`;
+};
